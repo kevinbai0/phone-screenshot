@@ -14,9 +14,9 @@ iPhone X mockup from [Goran Tomičić](https://dribbble.com/shots/3815530-Freebi
 
 ## Usage
 
-Run `phone-screenshot --filename <file.png>`
+Run `phone-screenshot <file1.png> <file2.png> ...`
 
-Output is `<filename>.out.png`
+Output is `<filename1>.out.png` `<filename2>.out.png` `...`
 
 ## Current features
 
