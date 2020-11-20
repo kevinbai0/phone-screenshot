@@ -1,26 +1,26 @@
-import { Assets, Device, getDeviceDimensions, scale, sizeClass } from "../dimensions"
+import {
+  Assets,
+  Device,
+  getDeviceDimensions,
+  scale,
+  sizeClass,
+} from '../dimensions';
 
 function testPhone(device: Device, toBe: Assets) {
-  expect(
-    sizeClass(scale(getDeviceDimensions(device), '3x'))
-  ).toEqual({
+  expect(sizeClass(scale(getDeviceDimensions(device), '3x'))).toEqual({
     asset: toBe,
-    sizeClass: '3x'
-  })
+    sizeClass: '3x',
+  });
 
-  expect(
-    sizeClass(scale(getDeviceDimensions(device), '2x'))
-  ).toEqual({
+  expect(sizeClass(scale(getDeviceDimensions(device), '2x'))).toEqual({
     asset: toBe,
-    sizeClass: '2x'
-  })
+    sizeClass: '2x',
+  });
 
-  expect(
-    sizeClass(getDeviceDimensions(device)),
-  ).toEqual({
+  expect(sizeClass(getDeviceDimensions(device))).toEqual({
     asset: toBe,
-    sizeClass: '1x'
-  })
+    sizeClass: '1x',
+  });
 }
 
 test('Size classing works', () => {
@@ -36,4 +36,4 @@ test('Size classing works', () => {
   testPhone('iPhone 12', 'iPhoneTall390');
   testPhone('iPhone 12 Pro', 'iPhoneTall390');
   testPhone('iPhone 12 Pro Max', 'iPhoneTall428');
-})
+});

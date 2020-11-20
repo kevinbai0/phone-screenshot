@@ -4,7 +4,7 @@ const Assets = {
   iPhoneTall390: 'iPhoneTall390',
   iPhoneShort414: 'iPhoneShort414',
   iPhoneTall414: 'iPhoneTall414',
-  iPhoneTall428: 'iPhoneTall428'
+  iPhoneTall428: 'iPhoneTall428',
 } as const;
 export type Assets = keyof typeof Assets;
 
@@ -18,7 +18,7 @@ export type Device =
   | 'iPhone 12 Mini'
   | 'iPhone 12'
   | 'iPhone 12 Pro'
-  | 'iPhone 12 Pro Max'
+  | 'iPhone 12 Pro Max';
 
 export interface IDimension {
   width: number;
@@ -26,9 +26,10 @@ export interface IDimension {
 }
 
 export interface IAssetDimension {
-  asset: Assets
-  sizeClass: '1x' | '2x' | '3x'
-};
+  asset: Assets;
+  sizeClass: '1x' | '2x' | '3x';
+  originalDimensions: IDimension;
+}
 
 export const dimensions: Record<Assets, IDimension> = {
   // ratio: 0.5622188906
@@ -39,22 +40,22 @@ export const dimensions: Record<Assets, IDimension> = {
   // ratio: 0.4618226601
   iPhoneTall375: {
     width: 375,
-    height: 812
+    height: 812,
   },
   // ratio: 0.4620853081
   iPhoneTall390: {
     width: 390,
-    height: 844
+    height: 844,
   },
   // ratio: 0.5625000000
   iPhoneShort414: {
     width: 414,
-    height: 736
+    height: 736,
   },
   // ratio: 0.4620535714
   iPhoneTall414: {
     width: 414,
-    height: 896
+    height: 896,
   },
   // ratio: 0.4622030238
   iPhoneTall428: {
@@ -73,29 +74,34 @@ const DeviceDimensions: Record<Device, Assets> = {
   'iPhone 12 Mini': 'iPhoneTall375',
   'iPhone 12': 'iPhoneTall390',
   'iPhone 12 Pro': 'iPhoneTall390',
-  'iPhone 12 Pro Max': 'iPhoneTall428'
-}
+  'iPhone 12 Pro Max': 'iPhoneTall428',
+};
 
 const matchDimensionClass = (dim: IDimension): Assets => {
   const currDimensions = (dim.width / dim.height).toFixed(6);
-  const entry = Object.entries(dimensions).find(([key, dimension]) => {
+  const entry = Object.entries(dimensions).find(([, dimension]) => {
     return currDimensions === (dimension.width / dimension.height).toFixed(6);
-  })
+  });
 
   if (!entry) {
     throw new Error(`Dimensions ${dim} does not match any asset`);
   }
 
-  return entry[0] as Assets
-}
+  // Temporary hard code since only have iPhone 375x812
+  if (entry[0].includes('Tall')) {
+    return 'iPhoneTall375';
+  }
+
+  return entry[0] as Assets;
+};
 
 export const getDeviceDimensions = (device: Device) => {
   return dimensions[DeviceDimensions[device]];
-}
+};
 
 export const getAssetDimensions = (assetDims: IAssetDimension) => {
   return scale(dimensions[assetDims.asset], assetDims.sizeClass);
-}
+};
 
 export const sizeClass = (dims: IDimension): IAssetDimension => {
   const asset = matchDimensionClass(dims);
@@ -108,26 +114,31 @@ export const sizeClass = (dims: IDimension): IAssetDimension => {
   if (ratio < 2) {
     return {
       sizeClass: '1x',
-      asset
-    }
-  }
-  else if (ratio < 3) {
+      asset,
+      originalDimensions: dims,
+    };
+  } else if (ratio < 3) {
     return {
       sizeClass: '2x',
-      asset
-    }
+      asset,
+      originalDimensions: dims,
+    };
   }
   return {
     sizeClass: '3x',
-    asset
-  }
-}
+    asset,
+    originalDimensions: dims,
+  };
+};
 
-export const scale = (dimension: IDimension, sizeClass: '1x' | '2x' | '3x'): IDimension => {
+export const scale = (
+  dimension: IDimension,
+  sizeClass: '1x' | '2x' | '3x'
+): IDimension => {
   const multipler = parseInt(sizeClass);
 
   return {
     width: dimension.width * multipler,
-    height: dimension.height * multipler
-  }
-}
+    height: dimension.height * multipler,
+  };
+};
