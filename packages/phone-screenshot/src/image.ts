@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { IAssetDimension, getAssetDimensions, sizeClass } from './dimensions';
-import { IPaths } from './path';
+import { getAsset } from './paths';
 
 export const preprocessImage = (
   image: sharp.Sharp,
@@ -17,10 +17,10 @@ export const preprocessImage = (
   return image.resize({ width: getAssetDimensions(assetDims).width });
 };
 
-export const setDeviceMockup = async (image: sharp.Sharp, paths: IPaths) => {
+export const setDeviceMockup = async (image: sharp.Sharp) => {
   const { asset, sizeClass, originalDimensions } = await validateImage(image);
 
-  const deviceMockup = paths.asset(asset, sizeClass);
+  const deviceMockup = getAsset(asset, sizeClass);
 
   const imageBuffer = await preprocessImage(image, {
     asset,

@@ -2,8 +2,7 @@
 
 import sharp from 'sharp';
 import yargs from 'yargs';
-import { setDeviceMockup } from './image';
-import { paths } from './path';
+import { ImageProcessing } from '.';
 
 main().catch(console.error).finally(process.exit);
 
@@ -18,8 +17,6 @@ async function main() {
     throw 'No filename specified';
   }
 
-  const handler = await paths();
-
   const outputs = filenames.map(async (filename) => {
     const image = sharp(filename);
     const fileSegments = filename.split('.');
@@ -28,7 +25,7 @@ async function main() {
       'out',
       ...fileSegments.slice(-1),
     ].join('.');
-    const output = await setDeviceMockup(image, handler);
+    const output = await ImageProcessing.setDeviceMockup(image);
     return await output.toFile(outFilename);
   });
 

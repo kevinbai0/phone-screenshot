@@ -31,7 +31,7 @@ export interface IAssetDimension {
   originalDimensions: IDimension;
 }
 
-export const dimensions: Record<Assets, IDimension> = {
+const dimensions: Record<Assets, IDimension> = {
   // ratio: 0.5622188906
   iPhoneShort375: {
     width: 375,
