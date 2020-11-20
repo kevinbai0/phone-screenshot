@@ -1,15 +1,32 @@
 import sharp from "sharp";
-import { disposeEmitNodes } from "typescript";
-import { IAssetDimension, dimensions, scale } from './dimensions';
+import { IAssetDimension, getAssetDimensions, sizeClass } from './dimensions';
+import { IPaths } from './path';
 
 export const preprocessImage = (image: sharp.Sharp, assetDims: IAssetDimension) => {
-  const deviceDims = scale((() => {
-    // temporary until find a proper iPhone 11 size
-    if (assetDims.asset === 'iPhone11') {
-      return dimensions.iPhoneX;
-    }
-    return dimensions[assetDims.asset];
-  })(), assetDims.sizeClass)
+  return image.resize(getAssetDimensions(assetDims).width)
+}
 
-  return image.resize(deviceDims.width)
+export const setDeviceMockup = async (image: sharp.Sharp, paths: IPaths) => {
+  const { asset, sizeClass } = await validateImage(image);
+
+  const deviceMockup = paths.asset(asset, sizeClass);
+
+  const imageBuffer = await preprocessImage(image, {asset, sizeClass}).toBuffer();
+
+  return deviceMockup.composite([{
+    input: imageBuffer,
+    blend: 'dest-over'
+  }])
+}
+
+const validateImage = async (image: sharp.Sharp) => {
+  const meta = await image.metadata();
+  if (!meta.width || !meta.height) {
+    throw 'Image has invalid dimensions';
+  }
+
+  return sizeClass({
+    width: meta.width,
+    height: meta.height
+  })
 }

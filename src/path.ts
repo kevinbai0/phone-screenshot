@@ -5,8 +5,12 @@ import { Assets } from './dimensions';
 
 const assetsPath = path.resolve(__dirname, '..', 'assets');
 
+export interface IPaths {
+  asset: (asset: Assets, size?: '1x' | '2x' | '3x') => sharp.Sharp;
+  readonly assets: string[];
+}
 
-export const paths = async () => {
+export const paths = async (): Promise<IPaths> => {
   const getAssets = async () => {
     return await fs.promises.readdir(assetsPath);
   }

@@ -3,7 +3,7 @@
 import sharp from 'sharp';
 import yargs from 'yargs';
 import { sizeClass } from './dimensions';
-import { preprocessImage } from './image';
+import { preprocessImage, setDeviceMockup } from './image';
 import { paths } from './path';
 
 main().catch(console.error).finally(process.exit);
@@ -20,17 +20,10 @@ async function main() {
   const handler = await paths();
 
   const image = sharp(argv.filename);
-  const { asset, sizeClass } = await validateImage(image);
-
-  const iPhoneX = handler.asset(asset, sizeClass);
-
-  const imageBuffer = await preprocessImage(image, {asset, sizeClass}).toBuffer();
-
   const filename = argv.filename.split('.');
-  await iPhoneX.composite([{
-    input: imageBuffer,
-    blend: 'dest-over'
-  }]).toFile([...filename.slice(0, -1), 'out', ...filename.slice(-1)].join('.'))
+  const outFilename = [...filename.slice(0, -1), 'out', ...filename.slice(-1)].join('.');
+  const output = await setDeviceMockup(image, handler)
+  await output.toFile(outFilename)
 }
 
 const validateImage = async (image: sharp.Sharp) => {
