@@ -1,6 +1,11 @@
 import React from "react";
-import { Box } from "@app/components/Box";
+import { Box } from "@app/components/atoms/Box";
+import { Layout } from "@app/components/molecules/Layout";
 
 export default function Home() {
-  return <Box>Hello world!</Box>
+  return (
+    <Layout>
+      <Box pt={50} bg="red">Hello world!</Box>
+    </Layout>
+  );
 }
